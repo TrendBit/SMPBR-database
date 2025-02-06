@@ -10,6 +10,7 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=trendbit
       - DOCKER_INFLUXDB_INIT_BUCKET=smpbr
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+      - INFLUXDB_REPORTING_DISABLED=true
     volumes:
       - influxdb-data:/var/lib/influxdb2
       - ./influxdb:/etc/influxdb2
@@ -36,8 +37,12 @@ services:
     image: kapacitor:latest
     container_name: kapacitor
     environment:
-      - KAPACITOR_HOSTNAME=kapacitor
-      - INFLUXDB_URL=http://influxdb:8086
+      - KAPACITOR_LOGGING_LEVEL=INFO
+      - KAPACITOR_REPORTING_ENABLED=false
+      - KAPACITOR_INFLUXDB_0_URLS_0=http://influxdb:8086
+      - KAPACITOR_INFLUXDB_0_USERNAME=trendbit
+      - KAPACITOR_INFLUXDB_0_PASSWORD=my-super-secret-auth-token
+      - KAPACITOR_INFLUXDB_0_DISABLE_SUBSCRIPTIONS=true
     networks:
       - smpbr-influx
     depends_on:
@@ -47,8 +52,8 @@ services:
 
   smpbr_data_mdns:
     image: flungo/avahi
-    container_name: smpbr_data_mdns
     network_mode: host
+    container_name: smpbr_data_mdns
     environment:
       - SERVER_HOST_NAME=smpbr_data
 
