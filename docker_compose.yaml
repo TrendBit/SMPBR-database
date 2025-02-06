@@ -1,0 +1,61 @@
+version: "3.9"
+services:
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=reactor
+      - DOCKER_INFLUXDB_INIT_PASSWORD=growgrow
+      - DOCKER_INFLUXDB_INIT_ORG=trendbit
+      - DOCKER_INFLUXDB_INIT_BUCKET=smpbr
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - ./influxdb:/etc/influxdb2
+    networks:
+      - smpbr-influx
+    ports:
+      - 8086:8086
+
+  chronograf:
+    image: chronograf:latest
+    container_name: chronograf
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+    networks:
+      - smpbr-influx
+    depends_on:
+      - influxdb
+    ports:
+      - 8888:8888
+    volumes:
+       - chronograf-data:/var/lib/chronograf
+
+  kapacitor:
+    image: kapacitor:latest
+    container_name: kapacitor
+    environment:
+      - KAPACITOR_HOSTNAME=kapacitor
+      - INFLUXDB_URL=http://influxdb:8086
+    networks:
+      - smpbr-influx
+    depends_on:
+      - influxdb
+    ports:
+      - 9092:9092
+
+  smpbr_data_mdns:
+    image: flungo/avahi
+    container_name: smpbr_data_mdns
+    network_mode: host
+    environment:
+      - SERVER_HOST_NAME=smpbr_data
+
+volumes:
+  influxdb-data:
+  chronograf-data:
+
+networks:
+  smpbr-influx:
+    external: true
