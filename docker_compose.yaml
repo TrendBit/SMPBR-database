@@ -23,7 +23,11 @@ services:
     image: chronograf:latest
     container_name: chronograf
     environment:
+      - LOG_LEVEL=INFO
       - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_ORG=trendbit
+      - INFLUXDB_TOKEN=my-super-secret-auth-token
+      - KAPACITOR_URL=http://kapacitor:9092
     networks:
       - smpbr-influx
     depends_on:
