@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone='no'?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+  <name>smpbr_data</name>
+  <service>
+    <type>_bioreactor_database._tcp</type>
+    <port>8086</port>
+    <txt-record>description=SMPBR Influx database</txt-record>
+  </service>
+</service-group>

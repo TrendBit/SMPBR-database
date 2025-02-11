@@ -55,11 +55,15 @@ services:
       - 9092:9092
 
   smpbr_data_mdns:
-    image: flungo/avahi
+    image: ydkn/avahi:latest
     network_mode: host
     container_name: smpbr_data_mdns
-    environment:
-      - SERVER_HOST_NAME=smpbr_data
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+    volumes:
+      - ./avahi/services:/etc/avahi/services
+      - ./avahi/avahi-daemon.conf:/etc/avahi/avahi-daemon.conf
 
 volumes:
   influxdb-data:
@@ -67,4 +71,3 @@ volumes:
 
 networks:
   smpbr-influx:
-    external: true
