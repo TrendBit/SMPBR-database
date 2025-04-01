@@ -11,9 +11,10 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=smpbr
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
       - INFLUXDB_REPORTING_DISABLED=true
+      - INFLUXD_SESSION_LENGTH=1440
     volumes:
-      - influxdb-data:/var/lib/influxdb2
-      - ./influxdb:/etc/influxdb2
+      - ./influx-data:/var/lib/influxdb2
+      - ./influx-config:/etc/influxdb2
     networks:
       - smpbr-influx
     ports:
@@ -35,7 +36,7 @@ services:
     ports:
       - 8888:8888
     volumes:
-       - chronograf-data:/var/lib/chronograf
+       - ./chronograf-data:/var/lib/chronograf
 
   kapacitor:
     image: kapacitor:latest
@@ -64,10 +65,6 @@ services:
     volumes:
       - ./avahi/services:/etc/avahi/services
       - ./avahi/avahi-daemon.conf:/etc/avahi/avahi-daemon.conf
-
-volumes:
-  influxdb-data:
-  chronograf-data:
 
 networks:
   smpbr-influx:
